@@ -17,22 +17,25 @@ canvas{
   margin-right: auto;
   width: 90%;}
 section{
+  padding: 0;
 	margin-left: auto;
   margin-right: auto;
   width: 90%;
 	height: 300px;
 }
 section div{
-	display:inline-block;
-	/*width: 50%;*/
-	background-image: url("../images/Art_Institute_of_Chicago_Lion_Statue.jpg");
-	background-color: #cccccc;
-		background-repeat: no-repeat;
+	/*display:inline-block;*/
+	width: 50%;
+  height: 100%;
+  margin:0;
+  padding: 0;
+  background-attachment: local;
+	background-repeat: no-repeat;
 }
-#left {
+div.left{
 	float: left;
 }
-#right{
+div.right{
 	float: right;
 }
 footer{
