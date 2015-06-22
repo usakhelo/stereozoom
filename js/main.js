@@ -51,44 +51,32 @@ function onMouseMove(event) {
 }
 
 var delta_x = delta_y = 0;
-var prev_x, prev_y;
 function onViewWheel(event) {
 	var target = event.target;
 	var target_rect = target.getBoundingClientRect();
 	var target_width = target_rect.width;
+	var target_height = target_rect.height;
 	var click_x = event.clientX - target_rect.x;
 	var click_y = event.clientY - target_rect.y;
-	
-	if (mouse_moved) {
-		if (prev_x == undefined) {
-			prev_x = click_x;
-			prev_y = click_y;
-		}
-		click_x = click_x + ((prev_x - click_x) / scale );
-		click_y = click_y + ((prev_y - click_y) / scale );
-		mouse_moved = false;
-		console.log("prev_x:" + prev_x);
-		console.log("prev_scale:" + scale);
-	}
-	prev_x = click_x;
-	prev_y = click_y;
 
 	scale = scale + (event.deltaY / 3);
-	delta_x = click_x - (click_x * scale);
-	delta_y = click_y - (click_y * scale);
+	var x_ratio = click_x / target_width;
+	var y_ratio = click_y / target_height;
 
 	target.style.backgroundSize = (image_width * scale).toString() + "px auto";
 
+	delta_x = (((target_width * scale) - target_width)) * -x_ratio;
+	delta_y = (((target_height * scale) - target_height)) * -y_ratio;
 	// if(target.className == "left")
 	target.style.backgroundPosition = delta_x.toString() + "px " + delta_y.toString() + "px";
 	// else {
 	// 	target.style.backgroundPosition = (target_width + delta_x).toString() + "px " + delta_y.toString() + "px";
 	// }
-	console.log(click_x);
-	console.log(scale);
+	console.log(x_ratio);
 	console.log(delta_x);
-	console.log(target.style.backgroundSize);
-	console.log(target.style.backgroundPosition);
+	// console.log(delta_x);
+	// console.log(target.style.backgroundSize);
+	// console.log(target.style.backgroundPosition);
 	// console.log(event.deltaY/2);
 	event.preventDefault();
 }
