@@ -5,19 +5,24 @@ function draw_b() {
 }
 
 function draw_image() {
-	var canvas = document.getElementById("viewer");
+	var left_div = document.getElementById("left");
+	var right_div = document.getElementById("right");
 	var container = document.getElementById("content");
-	var context = canvas.getContext("2d");
+	// var context = canvas.getContext("2d");
 	var img = new Image();
 	img.src = "images/Art_Institute_of_Chicago_Lion_Statue.jpg";
 	img.onload = function() {
-		console.log(img.width);
-		console.log(img.height);
-		var c_width = container.width;
-		var img_aspect = img.width / img.height;
-		canvas.height = canvas.width / img_aspect;
+		// console.log(img.width);
+		// console.log(img.height);
+		left_div.width = right_div.width = img.width / 2;
+		left_div.height = right_div.height = img.height;
+
+		console.log(left_div.width);
+		console.log(left_div.height);
+		// var c_width = container.width;
+		// var img_aspect = img.width / img.height;
+		// canvas.height = canvas.width / img_aspect;
 		// canvas.width = img.width;
-		console.log(img_aspect);
-	  context.drawImage(img, 0, 0, canvas.width, canvas.height);
+	  // context.drawImage(img, 0, 0, canvas.width, canvas.height);
 	};
 }

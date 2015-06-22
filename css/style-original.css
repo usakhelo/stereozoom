@@ -16,6 +16,25 @@ canvas{
 	margin-left: auto;
   margin-right: auto;
   width: 90%;}
+section{
+	margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+	height: 300px;
+}
+section div{
+	display:inline-block;
+	/*width: 50%;*/
+	background-image: url("../images/Art_Institute_of_Chicago_Lion_Statue.jpg");
+	background-color: #cccccc;
+		background-repeat: no-repeat;
+}
+#left {
+	float: left;
+}
+#right{
+	float: right;
+}
 footer{
 	height: 20px;
 }
