@@ -20,6 +20,8 @@ function loadImage() {
 	img.addEventListener( 'load', onImageLoad, false );
 }
 
+var image_left, image_top, image_right, image_bottom;
+
 function onImageLoad(event) {
 	var img_aspect = img.width / img.height;
 	var cont_width = container.getBoundingClientRect().width;
@@ -32,6 +34,11 @@ function onImageLoad(event) {
 	right_div.style.backgroundSize = image_width.toString() + "px auto";
 	left_div.style.backgroundSize = image_width.toString() + "px auto";
 	right_div.style.backgroundPosition = (cont_width / -2.0).toString() + "px 0";
+
+	image_left = 0;
+	image_top = 0;
+	image_right = image_width;
+
 	console.log(cont_width);
 	console.log(right_width);
 }
@@ -50,8 +57,7 @@ function onMouseMove(event) {
 	console.log("mouse_moved:" + mouse_moved);
 }
 
-var x_ratio, y_ratio;
-var image_left, image_top, image_right, image_bottom;
+// var x_ratio, y_ratio;
 function onViewWheel(event) {
 	var target = event.target;
 	var target_rect = target.getBoundingClientRect();
@@ -60,27 +66,14 @@ function onViewWheel(event) {
 	var click_x = event.clientX - target_rect.x;
 	var click_y = event.clientY - target_rect.y;
 
-	if (mouse_moved) {
-		x_ratio = click_x / target_width / scale;
-		y_ratio = click_y / target_height / scale;
-		mouse_moved = false;
-	}
+	scale = (event.deltaY * 1.2);
+	image_left = ((image_left - click_x) * scale) + click_x;
+	image_top = ((image_top - click_y) * scale) + click_y;
+	image_right = ((image_right - click_x) * scale) + click_x;
 
-	target.style.backgroundSize = (image_width * scale).toString() + "px auto";
+	target.style.backgroundSize = (image_right - image_left).toString() + "px auto";
+	target.style.backgroundPosition = image_left.toString() + "px " + image_top.toString() + "px";
 
-	scale = scale + (event.deltaY / 3);
-	var delta_x = (((target_width * scale) - target_width)) * -x_ratio;
-	var delta_y = (((target_height * scale) - target_height)) * -y_ratio;
-	// if(target.className == "left")
-	target.style.backgroundPosition = delta_x.toString() + "px " + delta_y.toString() + "px";
-	// else {
-	// 	target.style.backgroundPosition = (target_width + delta_x).toString() + "px " + delta_y.toString() + "px";
-	// }
-	console.log(x_ratio);
-	// console.log(delta_x);
-	// console.log(delta_x);
-	// console.log(target.style.backgroundSize);
-	// console.log(target.style.backgroundPosition);
-	// console.log(event.deltaY/2);
+	console.log(event.deltaY);
 	event.preventDefault();
 }
