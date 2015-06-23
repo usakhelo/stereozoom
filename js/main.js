@@ -50,7 +50,8 @@ function onMouseMove(event) {
 	console.log("mouse_moved:" + mouse_moved);
 }
 
-var delta_x = delta_y = 0;
+var x_ratio, y_ratio;
+var image_left, image_top, image_right, image_bottom;
 function onViewWheel(event) {
 	var target = event.target;
 	var target_rect = target.getBoundingClientRect();
@@ -59,21 +60,24 @@ function onViewWheel(event) {
 	var click_x = event.clientX - target_rect.x;
 	var click_y = event.clientY - target_rect.y;
 
-	scale = scale + (event.deltaY / 3);
-	var x_ratio = click_x / target_width;
-	var y_ratio = click_y / target_height;
+	if (mouse_moved) {
+		x_ratio = click_x / target_width / scale;
+		y_ratio = click_y / target_height / scale;
+		mouse_moved = false;
+	}
 
 	target.style.backgroundSize = (image_width * scale).toString() + "px auto";
 
-	delta_x = (((target_width * scale) - target_width)) * -x_ratio;
-	delta_y = (((target_height * scale) - target_height)) * -y_ratio;
+	scale = scale + (event.deltaY / 3);
+	var delta_x = (((target_width * scale) - target_width)) * -x_ratio;
+	var delta_y = (((target_height * scale) - target_height)) * -y_ratio;
 	// if(target.className == "left")
 	target.style.backgroundPosition = delta_x.toString() + "px " + delta_y.toString() + "px";
 	// else {
 	// 	target.style.backgroundPosition = (target_width + delta_x).toString() + "px " + delta_y.toString() + "px";
 	// }
 	console.log(x_ratio);
-	console.log(delta_x);
+	// console.log(delta_x);
 	// console.log(delta_x);
 	// console.log(target.style.backgroundSize);
 	// console.log(target.style.backgroundPosition);
