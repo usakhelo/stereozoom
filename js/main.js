@@ -1,6 +1,7 @@
 var container, left_div, right_div;
 var scale = 1;
 var image_width;
+var image_left, image_top, image_right, image_bottom;
 
 function init() {
 	container = document.getElementById("content");
@@ -8,7 +9,6 @@ function init() {
 	right_div = container.getElementsByClassName("right")[0];
 	left_div.addEventListener( 'click', onViewClick, false );
 	left_div.addEventListener( 'wheel', onViewWheel, false );
-	left_div.addEventListener( 'mousemove', onMouseMove, false );
 	right_div.addEventListener( 'click', onViewClick, false );
 	right_div.addEventListener( 'wheel', onViewWheel, false );
 	loadImage();
@@ -19,8 +19,6 @@ function loadImage() {
 	img.src = "images/Art_Institute_of_Chicago_Lion_Statue.jpg";
 	img.addEventListener( 'load', onImageLoad, false );
 }
-
-var image_left, image_top, image_right, image_bottom;
 
 function onImageLoad(event) {
 	var img_aspect = img.width / img.height;
@@ -38,42 +36,39 @@ function onImageLoad(event) {
 	image_left = 0;
 	image_top = 0;
 	image_right = image_width;
-
-	console.log(cont_width);
-	console.log(right_width);
 }
 
 function onViewClick(event) {
 	var local_rect = event.target.getBoundingClientRect();
 	var click_x = event.clientX - local_rect.x;
 	var click_y = event.clientY - local_rect.y;
-	console.log(click_x);
-	console.log(click_y);
 }
 
-var mouse_moved = false;
-function onMouseMove(event) {
-	mouse_moved = true;
-	console.log("mouse_moved:" + mouse_moved);
-}
-
-// var x_ratio, y_ratio;
-function onViewWheel(event) {
-	var target = event.target;
-	var target_rect = target.getBoundingClientRect();
+function onViewWheel(evt) {
+	console.log(evt.deltaY);
+	var target_rect = evt.target.getBoundingClientRect();
 	var target_width = target_rect.width;
-	var target_height = target_rect.height;
-	var click_x = event.clientX - target_rect.x;
-	var click_y = event.clientY - target_rect.y;
+	var click_x = evt.clientX - target_rect.left;
+	var click_y = evt.clientY - target_rect.top;
 
-	scale = (event.deltaY * 1.2);
+  var scale = (evt.deltaY > 0) ? 1.05 : .95;
+
 	image_left = ((image_left - click_x) * scale) + click_x;
 	image_top = ((image_top - click_y) * scale) + click_y;
 	image_right = ((image_right - click_x) * scale) + click_x;
+	if (image_left > 0) image_left = 0;
+	if (image_top > 0) image_top = 0;
+	if (image_right < (target_width * 2)) image_right = (target_width * 2);
 
-	target.style.backgroundSize = (image_right - image_left).toString() + "px auto";
-	target.style.backgroundPosition = image_left.toString() + "px " + image_top.toString() + "px";
+	console.log(scale);
+	displayImage(target_width);
 
-	console.log(event.deltaY);
-	event.preventDefault();
+	evt.preventDefault();
+}
+
+function displayImage(div_width) {
+	var image_width = (image_right - image_left);
+	right_div.style.backgroundSize = left_div.style.backgroundSize = image_width.toString() + "px auto";
+	left_div.style.backgroundPosition = image_left.toString() + "px " + image_top.toString() + "px";
+	right_div.style.backgroundPosition = (image_left - (image_width/2)).toString() + "px " + image_top.toString() + "px";
 }
