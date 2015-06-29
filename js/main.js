@@ -1,6 +1,6 @@
 var container, left_div, right_div;
 var scale = 1;
-var image_left, image_top, image_right, image_bottom;
+var image_left, image_top, image_right, image_bottom, min_height, min_width;
 
 function init() {
 	container = document.getElementById("content");
@@ -24,19 +24,19 @@ function loadImage() {
 function onImageLoad(event) {
 	var img_aspect = img.width / img.height;
 	var cont_width = container.getBoundingClientRect().width;
-	var cont_height = cont_width / img_aspect;
-	var right_width = right_div.getBoundingClientRect().width;
-	container.style.height = cont_height.toString() + "px";
+	var cont_height = min_height = cont_width / img_aspect;
+	var right_width = min_width = right_div.getBoundingClientRect().width;
+	left_div.style.height = right_div.style.height = min_height.toString() + "px";
 	left_div.style.backgroundImage = "url(" + img.src + ")";
 	right_div.style.backgroundImage = "url(" + img.src + ")";
-	right_div.style.backgroundSize = (right_width * 2).toString() + "px auto";
-	left_div.style.backgroundSize = (right_width * 2).toString() + "px auto";
-	right_div.style.backgroundPosition = (cont_width / -2.0).toString() + "px 0";
+	right_div.style.backgroundSize = (min_width * 2).toString() + "px auto";
+	left_div.style.backgroundSize = (min_width * 2).toString() + "px auto";
+	right_div.style.backgroundPosition = (-min_width).toString() + "px 0";
 
 	image_left = 0;
 	image_top = 0;
-	image_right = (right_width * 2);
-	image_bottom = cont_height;
+	image_right = (min_width * 2);
+	image_bottom = min_height;
 }
 
 function onViewClick(event) {
@@ -94,29 +94,49 @@ function onMouseDown(event) {
 function onViewWheel(evt) {
 	// console.log(evt.deltaY);
 	var target_rect = evt.target.getBoundingClientRect();
-	var target_width = target_rect.width;
-	var target_height = target_rect.height;
-	var target_top = target_rect.top;
+
 	var click_x = evt.clientX - target_rect.left;
 	var click_y = evt.clientY - target_rect.top;
 
   var scale = (evt.deltaY > 0) ? 1.05 : .95;
 
-  var old_left = image_left;
-  var old_right = image_right;
-  var old_top = image_top;
 	image_left = ((image_left - click_x) * scale) + click_x;
-	image_right = ((image_right - click_x) * scale) + click_x;
 	image_top = ((image_top - click_y) * scale) + click_y;
+	image_right = ((image_right - click_x) * scale) + click_x;
 	image_bottom = ((image_bottom - click_y) * scale) + click_y;
+
 	var image_width = image_right - image_left;
 	var image_height = image_bottom - image_top;
-	if (image_left > 0) image_left = 0;
-	if (((image_width / 2) + image_left) < target_width )	image_right = old_right;
-	if (image_top > 0) image_top = 0;
-	if ((image_height + image_top) < target_height) image_top = old_top;
-	displayImage();
 
+	if (image_width <= (min_width * 2) || image_height <= min_height) {
+		image_right = (min_width * 2);
+		image_bottom = min_height;
+		image_left = 0;
+		image_top = 0;
+	}
+
+	var image_width = image_right - image_left;
+	var image_height = image_bottom - image_top;
+
+	if (image_left > 0){
+		image_left = 0;
+	}
+	else if (image_left < min_width - (image_width / 2)) {
+		var correct_width = min_width - (image_width / 2);
+		image_right = image_right - (image_left - correct_width);
+		image_left = correct_width;
+	}
+
+ 	if (image_top > 0){
+		image_top = 0;
+	}
+	else if (image_top < (min_height - image_height)) {
+		var correct_top = (min_height - image_height);
+		image_bottom = image_bottom - (image_top - correct_top);
+		image_top = correct_top;
+	}
+
+	displayImage();
 	evt.preventDefault();
 }
 
